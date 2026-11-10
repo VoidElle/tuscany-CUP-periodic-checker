@@ -13,11 +13,11 @@ Polls the Tuscany CUP booking portal (`prenota.sanita.toscana.it`) and alerts wh
 main.py                 # entry point: loop, check_once
 cup_checker/config.py   # load_env: reads root .env, real env vars win
 cup_checker/cup_api.py  # portal calls
-cup_checker/notifier.py # console + Telegram sendMessage (HTML + "Prenota ora" button, format approved by user) + macOS notification
+cup_checker/notifier.py # console + Telegram sendMessage (HTML + "Prenota ora" button, format approved by user) + desktop notification (macOS osascript, Linux notify-send, Windows PowerShell 5.1 toast)
 tests/test_cup_api.py   # assert-based self-check
 ```
 
-- Run: `.venv/bin/python main.py`
+- Run: `./run.sh` (macOS/Linux) or `run.bat` (Windows)
 - Test: `.venv/bin/python -m tests.test_cup_api` (from root; plain `python tests/...` cannot import `cup_checker`)
 
 # Portal API knowledge

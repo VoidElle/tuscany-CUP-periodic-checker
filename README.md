@@ -4,7 +4,7 @@
   <br>
   <img src="https://img.shields.io/badge/python-3.14-3776AB?style=flat-square&logo=python&logoColor=white" alt="python">
   <img src="https://img.shields.io/badge/dependencies-none-brightgreen?style=flat-square" alt="dependencies">
-  <img src="https://img.shields.io/badge/platform-macOS-lightgrey?style=flat-square&logo=apple" alt="platform">
+  <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey?style=flat-square" alt="platform">
   <img src="https://img.shields.io/badge/notifications-Telegram-26A5E4?style=flat-square&logo=telegram&logoColor=white" alt="telegram">
 </div>
 
@@ -16,7 +16,7 @@ Tuscany CUP Periodic Checker prende una **ricetta elettronica**, chiede al porta
 
 - 🔁 **Controllo periodico**: di default ogni ora, intervallo configurabile
 - 📲 **Notifica Telegram**: messaggio formattato con pulsante **📅 Prenota ora** (opzionale)
-- 🍎 **Notifica macOS**: banner con suono sul Mac
+- 🖥️ **Notifica desktop**: macOS (banner con suono), Linux (`notify-send`), Windows (toast)
 - 🧾 **Ricetta sempre aggiornata**: la ricetta viene riletta a ogni controllo, perché il portale rigenera i suoi ID
 - 🛡️ **Privacy**: i dati personali stanno solo in `.env` e non finiscono mai nei log
 - 🪶 **Zero dipendenze**: solo libreria standard di Python
@@ -28,6 +28,8 @@ git clone <questo repository>
 cd tuscany-CUP-periodic-checker
 python3 -m venv .venv   # opzionale: run.sh usa python3 se il venv non c'è
 ```
+
+Su Windows: `py -m venv .venv` (opzionale, `run.bat` usa `python` se il venv non c'è).
 
 ## Configuration ⚙️
 
@@ -57,7 +59,7 @@ TELEGRAM_CHAT_ID=<chat id>
 
 ### Telegram 📲
 
-La notifica Telegram è **attiva solo se ci sono sia `TELEGRAM_BOT_TOKEN` sia `TELEGRAM_CHAT_ID`**. Senza queste chiavi arrivano solo l'avviso in console e la notifica macOS.
+La notifica Telegram è **attiva solo se ci sono sia `TELEGRAM_BOT_TOKEN` sia `TELEGRAM_CHAT_ID`**. Senza queste chiavi arrivano solo l'avviso in console e la notifica desktop.
 
 Per trovare il chat id:
 
@@ -72,18 +74,21 @@ Prova la notifica senza chiamare il portale:
 .venv/bin/python -c "from cup_checker.config import load_env; load_env(); from cup_checker.notifier import notify; notify('test CUP checker')"
 ```
 
+Su Windows sostituisci `.venv/bin/python` con `.venv\Scripts\python`.
+
 ## Usage 🚀
 
-```bash
-./run.sh
-```
+| Sistema | Comando |
+|---|---|
+| macOS / Linux | `./run.sh` |
+| Windows | `run.bat` |
 
 Lo script gira in loop finché non lo fermi con `Ctrl+C`.
 
 | Output | Significato |
 |---|---|
 | `[<timestamp>] no availability` | Nessun posto libero, riprova al prossimo giro |
-| Telegram + notifica macOS + elenco in console | 🎉 Posto libero: corri a prenotare |
+| Telegram + notifica desktop + elenco in console | 🎉 Posto libero: corri a prenotare |
 | `error: ...` su stderr | Errore di rete o API, riprova al prossimo giro |
 
 ## How it works 🔧
@@ -96,7 +101,7 @@ Lo script gira in loop finché non lo fermi con `Ctrl+C`.
 └──────┬──────┘                                      └──────────────┘
        │ posto libero?
        ▼
-  📲 Telegram · 🍎 macOS · 🖥️ console
+  📲 Telegram · 🖥️ desktop · ⌨️ console
 ```
 
 1. **Lettura ricetta**: il portale restituisce la ricetta associata a codice fiscale, tessera e NRE
@@ -108,12 +113,12 @@ Dettagli tecnici dell'API in [`CLAUDE.md`](CLAUDE.md).
 ## Project structure 🗂️
 
 ```
-run.sh                   # avvio
+run.sh / run.bat         # avvio (macOS-Linux / Windows)
 main.py                  # loop e singolo controllo
 cup_checker/
   config.py              # lettura .env
   cup_api.py             # chiamate al portale
-  notifier.py            # console + Telegram + macOS
+  notifier.py            # console + Telegram + desktop
 tests/
   test_cup_api.py        # self-check
 ```
@@ -130,7 +135,9 @@ Va lanciato dalla root con `-m`.
 
 - Cerca solo nell'**area dell'assistito**, non nelle aree limitrofe
 - Il caso "appuntamento disponibile" non è ancora stato osservato dal vivo, quindi la notifica non riporta data e struttura
-- Si ferma se il Mac va in sospensione o se chiudi il terminale
+- Si ferma se il computer va in sospensione o se chiudi il terminale
+- Su Linux senza `notify-send` (es. server headless) non c'è notifica desktop: restano console e Telegram
+- Su Windows serve Windows PowerShell 5.1 (`powershell.exe`, già incluso in Windows 10/11)
 
 ## Troubleshooting 🔍
 
@@ -144,4 +151,7 @@ Il portale ha rifiutato la ricerca. Di solito il codice fiscale non arriva nell'
 Il token nell'URL è sbagliato. Scrivi `bot` attaccato al token, senza `<` `>` né spazi. Se non funziona ancora, rigenera il token con `/token` su BotFather.
 
 ### `telegram error: ...`
-La notifica Telegram non è partita, ma quella macOS sì. Controlla token e chat id con il comando di test in [Telegram](#telegram-).
+La notifica Telegram non è partita, ma quella desktop sì. Controlla token e chat id con il comando di test in [Telegram](#telegram-).
+
+### `desktop notification error: ...`
+La notifica desktop non è partita, ma console e Telegram sì. Su Linux installa `notify-send` (pacchetto `libnotify-bin` su Debian/Ubuntu, `libnotify` su Fedora/Arch).
