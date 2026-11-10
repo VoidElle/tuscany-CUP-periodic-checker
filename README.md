@@ -14,7 +14,7 @@
 
 > **Language note:** this README is written in Italian on purpose. The project targets one Italian regional service only (the CUP booking portal of Regione Toscana), so its users are Italian residents of Tuscany.
 
-Tuscany CUP Periodic Checker prende una **ricetta elettronica**, chiede al portale CUP le disponibilità e ti manda una notifica appena compare un appuntamento libero. Così non devi ricaricare la pagina a mano.
+Tuscany CUP Periodic Checker prende una **ricetta elettronica**, chiede al portale CUP periodicamente le disponibilità e ti manda una notifica appena compare un appuntamento libero. Così non devi ricaricare la pagina a mano.
 
 ## Funzionalità ✨
 
