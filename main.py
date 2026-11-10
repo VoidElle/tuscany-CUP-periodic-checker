@@ -2,6 +2,7 @@
 
 import json
 import os
+import random
 import sys
 import time
 from datetime import datetime
@@ -13,6 +14,7 @@ from cup_checker.notifier import notify_availability
 
 def check_once():
     prescriptions = get_prescriptions()
+    time.sleep(random.uniform(2, 6))  # gap between the two calls, like a person reading the page
     appointments = get_appointments(prescriptions)
     stamp = datetime.now().isoformat(timespec="seconds")
     if appointments:
@@ -31,7 +33,7 @@ def main():
             check_once()
         except Exception as e:  # keep looping on network/API errors
             print(f"[{datetime.now().isoformat(timespec='seconds')}] error: {e}", file=sys.stderr, flush=True)
-        time.sleep(interval)
+        time.sleep(interval * random.uniform(0.8, 1.2))  # ±20% jitter: no fixed-period request pattern
 
 
 if __name__ == "__main__":

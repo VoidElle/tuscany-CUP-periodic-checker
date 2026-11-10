@@ -14,7 +14,7 @@ Tuscany CUP Periodic Checker prende una **ricetta elettronica**, chiede al porta
 
 ## Features ✨
 
-- 🔁 **Controllo periodico**: di default ogni ora, intervallo configurabile
+- 🔁 **Controllo periodico**: di default ogni ora, intervallo configurabile, con variazione casuale di ±20% e una pausa di 2–6 s tra le due chiamate
 - 📲 **Notifica Telegram**: messaggio formattato con pulsante **📅 Prenota ora** (opzionale)
 - 🖥️ **Notifica desktop**: macOS (banner con suono), Linux (`notify-send`), Windows (toast)
 - 🧾 **Ricetta sempre aggiornata**: la ricetta viene riletta a ogni controllo, perché il portale rigenera i suoi ID
