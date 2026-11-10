@@ -4,7 +4,11 @@ import gzip
 import json
 import os
 import zlib
-from compression import zstd
+
+try:
+    from compression import zstd  # Python 3.14+; the HA add-on image runs Alpine's Python 3.12
+except ImportError:
+    zstd = None
 
 try:
     import brotli  # optional: pip install -r requirements.txt
@@ -19,7 +23,7 @@ BASE_URL = "https://prenota.sanita.toscana.it/sis-portalepren/sis-portale-prenot
 # Same values the portal web app sends. "br" is offered only when the brotli package is installed, so every advertised encoding can be decoded.
 PORTAL_HEADERS = {
     "Accept": "application/json, text/plain, */*",
-    "Accept-Encoding": "gzip, deflate, br, zstd" if brotli else "gzip, deflate, zstd",
+    "Accept-Encoding": ", ".join(["gzip", "deflate"] + ["br"] * bool(brotli) + ["zstd"] * bool(zstd)),
     "Accept-Language": "it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7",
     "Cookie": "cookieModale=true",
     "Origin": "https://prenota.sanita.toscana.it",
@@ -43,7 +47,7 @@ def decode_body(raw, encoding):
             return zlib.decompress(raw)  # zlib-wrapped, per the RFC
         except zlib.error:
             return zlib.decompress(raw, -zlib.MAX_WBITS)  # raw deflate, sent by some servers
-    if encoding == "zstd":
+    if encoding == "zstd" and zstd:
         return zstd.decompress(raw)
     if encoding == "br" and brotli:
         return brotli.decompress(raw)

@@ -18,6 +18,10 @@ tests/test_cup_api.py   # unit: response parsing, decode_body
 tests/test_e2e.py       # end-to-end against a local fake portal (real HTTP, encodings, headers, notifications); fake data only
 requirements.txt        # optional brotli only (NOT brotlipy: abandoned, same `brotli` module name, conflicts)
 run.sh / run.bat        # launchers (.gitattributes keeps LF / CRLF)
+addon/                  # Home Assistant add-on: config.yaml (options/schema), Dockerfile, run.sh (bashio options -> env vars), DOCS.md, translations
+repository.yaml         # HA add-on repository manifest
+.github/workflows/build.yml # builds ghcr.io/<owner>/{arch}-tuscany-cup-checker on tag push, context = repo root
+.dockerignore           # keeps .env, log*.txt, .venv, .git out of the build context
 ```
 
 - Run: `./run.sh` (macOS/Linux) or `run.bat` (Windows)
@@ -47,3 +51,11 @@ Base: `https://prenota.sanita.toscana.it/sis-portalepren/sis-portale-prenotazion
 - Telegram calls get only `Content-Type: application/json`, never `PORTAL_HEADERS`.
 - Errors: `notify_error` alerts on console (stderr), Telegram and desktop. The same error repeated on consecutive rounds is logged as `error (repeated)` without a new alert. The error text is capped at 500 chars. Never put patient data in exception messages.
 - Startup: a stderr warning appears when `brotli` is missing.
+
+# Home Assistant add-on
+
+- Image base `ghcr.io/home-assistant/{arch}-base:3.22` = Alpine 3.22, Python 3.12 + `py3-brotli`. Code must stay Python 3.12 compatible: `compression.zstd` is optional (`zstd` is advertised only if it imports).
+- Check 3.12 compatibility with `uv run --no-project --python 3.12 python -m tests.test_cup_api` (and `tests.test_e2e`).
+- Options in `config.yaml`, `translations/*.yaml` and `run.sh` must keep the same keys. Patient fields use schema `password`. Never log option values in `run.sh`.
+- No `.env` in the container: `run.sh` exports the env vars and `load_env` is a no-op. No desktop notifier exists (no `notify-send`), so alerts go to the log and Telegram only.
+- Bump `version` in `addon/config.yaml` before tagging a release: the workflow tags images with that version.

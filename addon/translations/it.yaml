@@ -1,0 +1,19 @@
+configuration:
+  fiscal_code:
+    name: Codice fiscale
+    description: Codice fiscale dell'assistito intestatario della ricetta.
+  health_card_number:
+    name: Numero tessera sanitaria
+    description: Numero stampato sulla tessera sanitaria dell'assistito.
+  electronic_prescription_number:
+    name: Numero ricetta elettronica (NRE)
+    description: Codice NRE della ricetta elettronica da prenotare.
+  check_interval_seconds:
+    name: Intervallo di controllo (secondi)
+    description: Tempo tra un controllo e l'altro, con variazione casuale di ±20%. Minimo 300, predefinito 3600 (1 ora).
+  telegram_bot_token:
+    name: Token bot Telegram
+    description: Token ottenuto da @BotFather. Lasciare vuoto per disattivare gli avvisi Telegram.
+  telegram_chat_id:
+    name: Chat id Telegram
+    description: Chat che riceve gli avvisi. Telegram è attivo solo se sono impostati sia il token sia il chat id.

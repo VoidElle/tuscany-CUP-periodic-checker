@@ -1,0 +1,24 @@
+name: Tuscany CUP Checker
+version: "1.0.0"
+slug: tuscany_cup_checker
+description: Periodically checks the Tuscany CUP portal and alerts when an appointment slot frees up
+url: https://github.com/VoidElle/tuscany-CUP-periodic-checker
+arch: ["aarch64", "amd64", "armv7", "i386"]
+image: ghcr.io/voidelle/{arch}-tuscany-cup-checker
+startup: application
+boot: auto
+init: false
+options:
+  fiscal_code: ""
+  health_card_number: ""
+  electronic_prescription_number: ""
+  check_interval_seconds: 3600
+  telegram_bot_token: ""
+  telegram_chat_id: ""
+schema:
+  fiscal_code: password
+  health_card_number: password
+  electronic_prescription_number: password
+  check_interval_seconds: int(300,86400)
+  telegram_bot_token: password?
+  telegram_chat_id: str?

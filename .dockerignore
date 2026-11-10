@@ -1,0 +1,10 @@
+# Build context is the repo root: keep personal data and local state out of it.
+.env
+.env.*
+log*.txt
+.venv
+.git
+.idea
+.claude
+**/__pycache__
+.DS_Store

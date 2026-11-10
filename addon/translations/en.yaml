@@ -1,0 +1,19 @@
+configuration:
+  fiscal_code:
+    name: Fiscal code
+    description: Codice fiscale of the patient named on the prescription.
+  health_card_number:
+    name: Health card number
+    description: Number printed on the patient's tessera sanitaria.
+  electronic_prescription_number:
+    name: Electronic prescription number (NRE)
+    description: NRE code of the electronic prescription to book.
+  check_interval_seconds:
+    name: Check interval (seconds)
+    description: Time between checks, randomised by ±20%. Minimum 300, default 3600 (1 hour).
+  telegram_bot_token:
+    name: Telegram bot token
+    description: Token from @BotFather. Leave empty to disable Telegram alerts.
+  telegram_chat_id:
+    name: Telegram chat id
+    description: Chat that receives the alerts. Telegram is enabled only when both token and chat id are set.

@@ -5,7 +5,6 @@ import json
 import os
 import threading
 import zlib
-from compression import zstd
 from http.server import BaseHTTPRequestHandler, ThreadingHTTPServer
 
 import main
@@ -14,7 +13,9 @@ from cup_checker import cup_api, notifier
 FAKE_ENV = {"FISCAL_CODE": "AAAAAA00A00A000A", "HEALTH_CARD_NUMBER": "0", "ELECTRONIC_PRESCRIPTION_NUMBER": "0900A0000000000",
             "TELEGRAM_BOT_TOKEN": "", "TELEGRAM_CHAT_ID": ""}
 PRESCRIPTIONS = {"prescrizione": [{"idPrescrizione": "1", "listaPrestazioni": {"prestazione": [{"descrizionePrestazione": "VISITA TEST "}]}}]}
-ENCODERS = {"gzip": gzip.compress, "deflate": zlib.compress, "zstd": zstd.compress, "identity": lambda b: b}
+ENCODERS = {"gzip": gzip.compress, "deflate": zlib.compress, "identity": lambda b: b}
+if cup_api.zstd:
+    ENCODERS["zstd"] = cup_api.zstd.compress
 if cup_api.brotli:
     ENCODERS["br"] = cup_api.brotli.compress
 

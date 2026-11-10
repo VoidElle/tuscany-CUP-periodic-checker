@@ -14,15 +14,19 @@ print("ok services")
 
 import gzip
 import zlib
-from compression import zstd
-
 from cup_checker.cup_api import decode_body
 
 body = b'{"ok": true}'
 for raw, enc in [(body, None), (body, "identity"), (gzip.compress(body), "gzip"), (zlib.compress(body), "deflate"),
-                 (zlib.compress(body)[2:-4], "deflate"), (zstd.compress(body), "zstd")]:
+                 (zlib.compress(body)[2:-4], "deflate")]:
     assert decode_body(raw, enc) == body, enc
 import cup_checker.cup_api as cup_api
+
+if cup_api.zstd:
+    assert decode_body(cup_api.zstd.compress(body), "zstd") == body
+    assert "zstd" in cup_api.PORTAL_HEADERS["Accept-Encoding"]
+else:  # Python < 3.14: zstd is neither advertised nor decoded
+    assert "zstd" not in cup_api.PORTAL_HEADERS["Accept-Encoding"]
 
 if cup_api.brotli:
     assert decode_body(cup_api.brotli.compress(body), "br") == body

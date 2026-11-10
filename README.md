@@ -32,6 +32,17 @@ python3 -m venv .venv   # opzionale: run.sh usa python3 se il venv non c'è
 
 Su Windows: `py -m venv .venv` e `.venv\Scripts\pip install -r requirements.txt` (entrambi opzionali, `run.bat` usa `python` se il venv non c'è).
 
+### Home Assistant add-on 🏠
+
+Il checker gira anche come add-on di Home Assistant:
+
+1. **Settings → Add-ons → Add-on Store → ⋮ → Repositories**, aggiungi `https://github.com/VoidElle/tuscany-CUP-periodic-checker`
+2. Installa **Tuscany CUP Checker**
+3. Nella scheda **Configuration** inserisci codice fiscale, tessera, NRE e (opzionale) Telegram
+4. Avvia l'add-on e guarda la scheda **Log**
+
+Dettagli in [`addon/DOCS.md`](addon/DOCS.md). Nell'add-on gli avvisi arrivano su Telegram e nel log: non c'è notifica desktop.
+
 ## Configuration ⚙️
 
 Crea un file `.env` nella root del progetto:
@@ -120,6 +131,9 @@ cup_checker/
   config.py              # lettura .env
   cup_api.py             # chiamate al portale
   notifier.py            # console + Telegram + desktop
+addon/                   # add-on Home Assistant (config, Dockerfile, run.sh, DOCS, traduzioni)
+repository.yaml          # repository add-on per Home Assistant
+.github/workflows/       # build immagini add-on su GHCR (al push di un tag)
 tests/
   test_cup_api.py        # unit
   test_e2e.py            # end-to-end con portale finto
