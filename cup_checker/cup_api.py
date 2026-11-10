@@ -16,8 +16,7 @@ import urllib.request
 
 BASE_URL = "https://prenota.sanita.toscana.it/sis-portalepren/sis-portale-prenotazione/sis-portale-prenotazione"
 
-# Same values the portal web app sends. Left out on purpose: sec-ch-ua / sec-fetch-* (they declare a Chromium
-# browser). "br" is offered only when the brotli package is installed, so every advertised encoding can be decoded.
+# Same values the portal web app sends. "br" is offered only when the brotli package is installed, so every advertised encoding can be decoded.
 PORTAL_HEADERS = {
     "Accept": "application/json, text/plain, */*",
     "Accept-Encoding": "gzip, deflate, br, zstd" if brotli else "gzip, deflate, zstd",
@@ -26,6 +25,13 @@ PORTAL_HEADERS = {
     "Cookie": "cookieModale=true",
     "Origin": "https://prenota.sanita.toscana.it",
     "Referer": "https://prenota.sanita.toscana.it/",
+    "User-Agent": "Mozilla/5.0 (Macintosh; Intel Mac OS X 10_15_7) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/157.0.0.0 Safari/537.36",
+    "Sec-Ch-Ua": "Chromium\";v=\"157\", \"Not-A.Brand\";v=\"99",
+    "Sec-Fetch-Mode": "cors",
+    "Sec-Fetch-Site": "same-origin",
+    "Sec-Fetch-Dest": "empty",
+    "Sec-Ch-Ua-Mobile": "?0",
+    "Sec-Ch-Ua-Platform": "macOS",
 }
 
 
@@ -47,7 +53,7 @@ def decode_body(raw, encoding):
     raise RuntimeError(f"unsupported Content-Encoding: {encoding}")
 
 
-def http_json(url, payload=None, headers=None):
+def http_json(url: str, payload=None, headers=None):
     data = json.dumps(payload).encode() if payload is not None else None
     req = urllib.request.Request(url, data=data, headers={"Content-Type": "application/json", **(headers or {})})
     try:
