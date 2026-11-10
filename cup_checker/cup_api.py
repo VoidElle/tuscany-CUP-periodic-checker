@@ -27,10 +27,10 @@ def get_prescriptions():
         "numbersTeam": os.environ["HEALTH_CARD_NUMBER"],
     })
     body = http_json(f"{BASE_URL}/getPrescrizioneElettronica?{query}")
-    prescriptions = body.get("response", {}).get("listaPrescrizioni")
+    prescriptions = (body.get("response") or {}).get("listaPrescrizioni")
     if not prescriptions:
-        # Do not dump the body: it contains patient personal data.
-        raise RuntimeError(f"Prescription not found: {body.get('response', {}).get('esito')}")
+        # Code only: response and message.description can contain patient personal data.
+        raise RuntimeError(f"Prescription not found (portal code {(body.get('message') or {}).get('code')})")
     return prescriptions
 
 
