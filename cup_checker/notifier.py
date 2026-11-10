@@ -12,9 +12,12 @@ from cup_checker.cup_api import http_json
 BOOKING_URL = "https://prenota.sanita.toscana.it"
 
 
-def notify(message, telegram_html=None):
-    print(message, flush=True)
-    send_telegram(telegram_html or html.escape(message))
+BOOKING_BUTTON = {"inline_keyboard": [[{"text": "📅 Prenota ora", "url": BOOKING_URL}]]}
+
+
+def notify(message, telegram_html=None, reply_markup=None, stream=sys.stdout):
+    print(message, file=stream, flush=True)
+    send_telegram(telegram_html or html.escape(message), reply_markup)
     desktop_notify(message)
 
 
@@ -55,10 +58,22 @@ def notify_availability(count, services):
         "",
         "⏳ <i>I posti vanno via in fretta: prenota subito.</i>",
     ]
-    notify(plain, "\n".join(lines))
+    notify(plain, "\n".join(lines), BOOKING_BUTTON)
 
 
-def send_telegram(text_html):
+def notify_error(error, retry_minutes):
+    text = str(error)[:500]  # cap: Telegram limit is 4096 chars, and a short line reads better
+    lines = [
+        "⚠️ <b>CUP Toscana: errore durante il controllo</b>",
+        "",
+        f"<code>{html.escape(text)}</code>",
+        "",
+        f"🔁 <i>Riprovo tra circa {retry_minutes} minuti.</i>",
+    ]
+    notify(f"error: {text}", "\n".join(lines), stream=sys.stderr)
+
+
+def send_telegram(text_html, reply_markup=None):
     token, chat_id = os.environ.get("TELEGRAM_BOT_TOKEN"), os.environ.get("TELEGRAM_CHAT_ID")
     if not (token and chat_id):
         return
@@ -67,7 +82,7 @@ def send_telegram(text_html):
             "chat_id": chat_id,
             "text": text_html,
             "parse_mode": "HTML",
-            "reply_markup": {"inline_keyboard": [[{"text": "📅 Prenota ora", "url": BOOKING_URL}]]},
+            **({"reply_markup": reply_markup} if reply_markup else {}),
         })
     except Exception as e:  # a Telegram failure must not hide the alert; error text never contains the token
         print(f"telegram error: {e}", file=sys.stderr, flush=True)

@@ -3,7 +3,7 @@
   <p><em>Controlla periodicamente il CUP della Regione Toscana e ti avvisa appena si libera un posto per la tua visita</em></p>
   <br>
   <img src="https://img.shields.io/badge/python-3.14-3776AB?style=flat-square&logo=python&logoColor=white" alt="python">
-  <img src="https://img.shields.io/badge/dependencies-none-brightgreen?style=flat-square" alt="dependencies">
+  <img src="https://img.shields.io/badge/dependencies-optional-brightgreen?style=flat-square" alt="dependencies">
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey?style=flat-square" alt="platform">
   <img src="https://img.shields.io/badge/notifications-Telegram-26A5E4?style=flat-square&logo=telegram&logoColor=white" alt="telegram">
 </div>
@@ -19,7 +19,7 @@ Tuscany CUP Periodic Checker prende una **ricetta elettronica**, chiede al porta
 - 🖥️ **Notifica desktop**: macOS (banner con suono), Linux (`notify-send`), Windows (toast)
 - 🧾 **Ricetta sempre aggiornata**: la ricetta viene riletta a ogni controllo, perché il portale rigenera i suoi ID
 - 🛡️ **Privacy**: i dati personali stanno solo in `.env` e non finiscono mai nei log
-- 🪶 **Zero dipendenze**: solo libreria standard di Python
+- 🪶 **Dipendenze opzionali**: funziona con la sola libreria standard; `brotli` aggiunge la decompressione Brotli
 
 ## Installation 📦
 
@@ -27,9 +27,10 @@ Tuscany CUP Periodic Checker prende una **ricetta elettronica**, chiede al porta
 git clone <questo repository>
 cd tuscany-CUP-periodic-checker
 python3 -m venv .venv   # opzionale: run.sh usa python3 se il venv non c'è
+.venv/bin/pip install -r requirements.txt   # opzionale: supporto Brotli
 ```
 
-Su Windows: `py -m venv .venv` (opzionale, `run.bat` usa `python` se il venv non c'è).
+Su Windows: `py -m venv .venv` e `.venv\Scripts\pip install -r requirements.txt` (entrambi opzionali, `run.bat` usa `python` se il venv non c'è).
 
 ## Configuration ⚙️
 

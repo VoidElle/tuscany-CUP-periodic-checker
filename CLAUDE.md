@@ -7,7 +7,7 @@
 
 # Project
 
-Polls the Tuscany CUP booking portal (`prenota.sanita.toscana.it`) and alerts when an appointment becomes available for an electronic prescription. Python 3.14, stdlib only, venv in `.venv`.
+Polls the Tuscany CUP booking portal (`prenota.sanita.toscana.it`) and alerts when an appointment becomes available for an electronic prescription. Python 3.14 (needs `compression.zstd`), stdlib only plus optional `brotli` (`requirements.txt`; `br` is advertised in Accept-Encoding only if importable), venv in `.venv`.
 
 ```
 main.py                 # entry point: loop (interval ±20% jitter), check_once (2-6 s pause between the two calls)
