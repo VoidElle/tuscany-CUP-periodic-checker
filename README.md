@@ -121,16 +121,18 @@ cup_checker/
   cup_api.py             # chiamate al portale
   notifier.py            # console + Telegram + desktop
 tests/
-  test_cup_api.py        # self-check
+  test_cup_api.py        # unit
+  test_e2e.py            # end-to-end con portale finto
 ```
 
 ## Tests 🧪
 
 ```bash
-.venv/bin/python -m tests.test_cup_api
+.venv/bin/python -m tests.test_cup_api   # unit
+.venv/bin/python -m tests.test_e2e       # end-to-end su un portale finto locale
 ```
 
-Va lanciato dalla root con `-m`.
+Vanno lanciati dalla root con `-m`. Usano solo dati finti: nessuna chiamata al portale vero né a Telegram.
 
 ## Limitations ⚠️
 

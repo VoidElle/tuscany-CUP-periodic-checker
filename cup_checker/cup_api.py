@@ -21,7 +21,6 @@ PORTAL_HEADERS = {
     "Accept": "application/json, text/plain, */*",
     "Accept-Encoding": "gzip, deflate, br, zstd" if brotli else "gzip, deflate, zstd",
     "Accept-Language": "it-IT,it;q=0.9,en-US;q=0.8,en;q=0.7",
-    "Connection": "keep-alive",
     "Cookie": "cookieModale=true",
     "Origin": "https://prenota.sanita.toscana.it",
     "Referer": "https://prenota.sanita.toscana.it/",
