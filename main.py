@@ -1,16 +1,37 @@
-# This is a sample Python script.
+"""Periodically check Tuscany CUP for available appointments of an electronic prescription."""
 
-# Press ⌃R to execute it or replace it with your code.
-# Press Double ⇧ to search everywhere for classes, files, tool windows, actions, and settings.
+import json
+import os
+import sys
+import time
+from datetime import datetime
+
+from cup_checker.config import load_env
+from cup_checker.cup_api import get_appointments, get_prescriptions
+from cup_checker.notifier import notify
 
 
-def print_hi(name):
-    # Use a breakpoint in the code line below to debug your script.
-    print(f'Hi, {name}')  # Press ⌘F8 to toggle the breakpoint.
+def check_once():
+    appointments = get_appointments(get_prescriptions())
+    stamp = datetime.now().isoformat(timespec="seconds")
+    if appointments:
+        notify(f"{len(appointments)} appointment(s) available! Book at https://prenota.sanita.toscana.it")
+        print(json.dumps(appointments, indent=2, ensure_ascii=False), flush=True)
+    else:
+        print(f"[{stamp}] no availability", flush=True)
+    return bool(appointments)
 
 
-# Press the green button in the gutter to run the script.
-if __name__ == '__main__':
-    print_hi('PyCharm')
+def main():
+    load_env()
+    interval = int(os.environ.get("CHECK_INTERVAL_SECONDS", "3600"))
+    while True:
+        try:
+            check_once()
+        except Exception as e:  # keep looping on network/API errors
+            print(f"[{datetime.now().isoformat(timespec='seconds')}] error: {e}", file=sys.stderr, flush=True)
+        time.sleep(interval)
 
-# See PyCharm help at https://www.jetbrains.com/help/pycharm/
+
+if __name__ == "__main__":
+    main()
