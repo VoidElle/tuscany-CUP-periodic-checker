@@ -46,3 +46,8 @@ def get_appointments(prescriptions):
 
 def appointments_from(body):
     return ((body.get("response") or {}).get("listaAppuntamenti") or {}).get("appuntamento") or []
+
+
+def service_names(prescriptions):
+    return [p.get("descrizionePrestazione") for rx in prescriptions.get("prescrizione") or []
+            for p in (rx.get("listaPrestazioni") or {}).get("prestazione") or [] if p.get("descrizionePrestazione")]

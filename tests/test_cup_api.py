@@ -5,3 +5,9 @@ assert appointments_from({"response": {"listaAppuntamenti": {"appuntamento": []}
 assert appointments_from({"response": {"listaAppuntamenti": None}}) == []
 assert appointments_from({"response": {"listaAppuntamenti": {"appuntamento": [{"id": 1}]}}}) == [{"id": 1}]
 print("ok")
+
+from cup_checker.cup_api import service_names
+
+assert service_names({"prescrizione": [{"listaPrestazioni": {"prestazione": [{"descrizionePrestazione": "VISITA X"}, {}]}}]}) == ["VISITA X"]
+assert service_names({"prescrizione": [{"listaPrestazioni": None}]}) == []
+print("ok services")

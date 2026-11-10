@@ -1,7 +1,7 @@
 # Rules
 
 - NEVER read, print, cat, grep, copy or otherwise access the contents of `.env` (or any `.env*` file). It holds personal health data.
-- Known `.env` keys (names only): `FISCAL_CODE`, `HEALTH_CARD_NUMBER`, `ELECTRONIC_PRESCRIPTION_NUMBER`, optional `CHECK_INTERVAL_SECONDS` (default 3600). Load them at runtime via environment variables; never log their values.
+- Known `.env` keys (names only): `FISCAL_CODE`, `HEALTH_CARD_NUMBER`, `ELECTRONIC_PRESCRIPTION_NUMBER`, optional `CHECK_INTERVAL_SECONDS` (default 3600), `TELEGRAM_BOT_TOKEN`, `TELEGRAM_CHAT_ID` (Telegram alert sent only if both set; never log the token, it is in the API URL). Load them at runtime via environment variables; never log their values.
 - `log*.txt` files are captured portal traffic with real patient data (name, fiscal code, address, diagnosis). Gitignored. Never commit them or copy their contents into code, tests, docs or this file.
 - Never call the real portal with the real `.env` data from a Claude session: the response contains patient data. The user runs `main.py`. Probes with obviously fake data are fine.
 
@@ -13,7 +13,7 @@ Polls the Tuscany CUP booking portal (`prenota.sanita.toscana.it`) and alerts wh
 main.py                 # entry point: loop, check_once
 cup_checker/config.py   # load_env: reads root .env, real env vars win
 cup_checker/cup_api.py  # portal calls
-cup_checker/notifier.py # console + macOS osascript notification
+cup_checker/notifier.py # console + Telegram sendMessage (HTML + "Prenota ora" button, format approved by user) + macOS notification
 tests/test_cup_api.py   # assert-based self-check
 ```
 

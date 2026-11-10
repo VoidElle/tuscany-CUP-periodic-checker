@@ -7,15 +7,16 @@ import time
 from datetime import datetime
 
 from cup_checker.config import load_env
-from cup_checker.cup_api import get_appointments, get_prescriptions
-from cup_checker.notifier import notify
+from cup_checker.cup_api import get_appointments, get_prescriptions, service_names
+from cup_checker.notifier import notify_availability
 
 
 def check_once():
-    appointments = get_appointments(get_prescriptions())
+    prescriptions = get_prescriptions()
+    appointments = get_appointments(prescriptions)
     stamp = datetime.now().isoformat(timespec="seconds")
     if appointments:
-        notify(f"{len(appointments)} appointment(s) available! Book at https://prenota.sanita.toscana.it")
+        notify_availability(len(appointments), service_names(prescriptions))
         print(json.dumps(appointments, indent=2, ensure_ascii=False), flush=True)
     else:
         print(f"[{stamp}] no availability", flush=True)

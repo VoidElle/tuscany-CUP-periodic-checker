@@ -18,6 +18,23 @@ FISCAL_CODE=<codice fiscale>
 HEALTH_CARD_NUMBER=<numero tessera sanitaria>
 ELECTRONIC_PRESCRIPTION_NUMBER=<NRE della ricetta>
 CHECK_INTERVAL_SECONDS=3600   # opzionale, default 3600 (1 ora)
+TELEGRAM_BOT_TOKEN=<token del bot>   # opzionale
+TELEGRAM_CHAT_ID=<chat id>           # opzionale
+```
+
+### Telegram
+
+La notifica Telegram parte solo se ci sono sia `TELEGRAM_BOT_TOKEN` sia `TELEGRAM_CHAT_ID`.
+Per trovare il chat id:
+
+1. Manda un messaggio qualsiasi al bot da Telegram.
+2. Apri `https://api.telegram.org/bot<TOKEN>/getUpdates` nel browser.
+3. Copia il valore `message.chat.id` in `TELEGRAM_CHAT_ID`.
+
+Test della notifica (senza chiamare il portale):
+
+```
+.venv/bin/python -c "from cup_checker.config import load_env; load_env(); from cup_checker.notifier import notify; notify('test CUP checker')"
 ```
 
 `.env` contiene dati personali e sanitari: è in `.gitignore`, non committarlo.
@@ -33,7 +50,7 @@ finché non lo fermi (`Ctrl+C`).
 
 Output:
 - `[<timestamp>] no availability` se non ci sono posti
-- notifica macOS con suono + elenco appuntamenti in console se ci sono posti
+- messaggio Telegram + notifica macOS con suono + elenco appuntamenti in console se ci sono posti
 - `error: ...` su stderr in caso di errore di rete/API (riprova al giro dopo)
 
 ## Come funziona
@@ -50,7 +67,7 @@ run.sh                  # avvio
 main.py                 # loop e singolo controllo
 cup_checker/config.py   # lettura .env
 cup_checker/cup_api.py  # chiamate al portale
-cup_checker/notifier.py # avviso console + macOS
+cup_checker/notifier.py # avviso console + Telegram + macOS
 tests/test_cup_api.py   # self-check
 ```
 
