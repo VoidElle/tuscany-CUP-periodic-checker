@@ -16,7 +16,7 @@
 
 Tuscany CUP Periodic Checker prende una **ricetta elettronica**, chiede al portale CUP le disponibilità e ti manda una notifica appena compare un appuntamento libero. Così non devi ricaricare la pagina a mano.
 
-## Features ✨
+## Funzionalità ✨
 
 - 🔁 **Controllo periodico**: di default ogni ora, intervallo configurabile, con variazione casuale di ±20% e una pausa di 2–6 s tra le due chiamate
 - 📲 **Notifica Telegram**: messaggio formattato con pulsante **📅 Prenota ora** (opzionale)
@@ -25,7 +25,7 @@ Tuscany CUP Periodic Checker prende una **ricetta elettronica**, chiede al porta
 - 🛡️ **Privacy**: i dati personali stanno solo in `.env` e non finiscono mai nei log
 - 🪶 **Dipendenze opzionali**: funziona con la sola libreria standard; `brotli` aggiunge la decompressione Brotli
 
-## Installation 📦
+## Installazione 📦
 
 ```bash
 git clone https://github.com/VoidElle/tuscany-CUP-periodic-checker.git
@@ -36,7 +36,7 @@ python3 -m venv .venv   # opzionale: run.sh usa python3 se il venv non c'è
 
 Su Windows: `py -m venv .venv` e `.venv\Scripts\pip install -r requirements.txt` (entrambi opzionali, `run.bat` usa `python` se il venv non c'è).
 
-### Home Assistant add-on 🏠
+### Add-on di Home Assistant 🏠
 
 L'add-on di Home Assistant esiste per far girare lo script **24/7** su un setup Home Assistant già sempre acceso, senza tenere aperto un terminale o acceso un computer.
 
@@ -51,7 +51,7 @@ Per installarlo a mano:
 
 Dettagli in [`addon/DOCS.md`](addon/DOCS.md). Nell'add-on gli avvisi arrivano su Telegram e nel log: non c'è notifica desktop.
 
-## Configuration ⚙️
+## Configurazione ⚙️
 
 Crea un file `.env` nella root del progetto:
 
@@ -96,7 +96,7 @@ Prova la notifica senza chiamare il portale:
 
 Su Windows sostituisci `.venv/bin/python` con `.venv\Scripts\python`.
 
-## Usage 🚀
+## Utilizzo 🚀
 
 | Sistema | Comando |
 |---|---|
@@ -111,7 +111,7 @@ Lo script gira in loop finché non lo fermi con `Ctrl+C`.
 | Telegram + notifica desktop + elenco in console | 🎉 Posto libero: corri a prenotare |
 | `error: ...` su stderr | Errore di rete o API, riprova al prossimo giro |
 
-## How it works 🔧
+## Come funziona 🔧
 
 ```
 ┌─────────────┐  1. GET getPrescrizioneElettronica   ┌──────────────┐
@@ -130,7 +130,7 @@ Lo script gira in loop finché non lo fermi con `Ctrl+C`.
 
 Dettagli tecnici dell'API in [`CLAUDE.md`](CLAUDE.md).
 
-## Project structure 🗂️
+## Struttura del progetto 🗂️
 
 ```
 run.sh / run.bat         # avvio (macOS-Linux / Windows)
@@ -147,7 +147,7 @@ tests/
   test_e2e.py            # end-to-end con portale finto
 ```
 
-## Tests 🧪
+## Test 🧪
 
 ```bash
 .venv/bin/python -m tests.test_cup_api   # unit
@@ -156,7 +156,7 @@ tests/
 
 Vanno lanciati dalla root con `-m`. Usano solo dati finti: nessuna chiamata al portale vero né a Telegram.
 
-## Limitations ⚠️
+## Limiti ⚠️
 
 - Cerca solo nell'**area dell'assistito**, non nelle aree limitrofe
 - Il caso "appuntamento disponibile" non è ancora stato osservato dal vivo, quindi la notifica non riporta data e struttura
@@ -164,7 +164,7 @@ Vanno lanciati dalla root con `-m`. Usano solo dati finti: nessuna chiamata al p
 - Su Linux senza `notify-send` (es. server headless) non c'è notifica desktop: restano console e Telegram
 - Su Windows serve Windows PowerShell 5.1 (`powershell.exe`, già incluso in Windows 10/11)
 
-## Troubleshooting 🔍
+## Risoluzione dei problemi 🔍
 
 ### `error: Prescription not found (portal code 999)`
 Codice fiscale, tessera o NRE errati, oppure ricetta già prenotata o scaduta. Controlla i valori in `.env`. Il messaggio del portale non viene stampato, perché contiene il codice fiscale.
