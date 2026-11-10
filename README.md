@@ -10,6 +10,8 @@
 
 > **Disclaimer:** progetto non ufficiale e personale. Non è affiliato, approvato o supportato dalla Regione Toscana né dalle aziende sanitarie. Usa le stesse chiamate del portale [prenota.sanita.toscana.it](https://prenota.sanita.toscana.it): un controllo all'ora, come farebbe una persona.
 
+> **Language note:** this README is written in Italian on purpose. The project targets one Italian regional service only (the CUP booking portal of Regione Toscana), so its users are Italian residents of Tuscany.
+
 Tuscany CUP Periodic Checker prende una **ricetta elettronica**, chiede al portale CUP le disponibilità e ti manda una notifica appena compare un appuntamento libero. Così non devi ricaricare la pagina a mano.
 
 ## Features ✨
@@ -34,7 +36,9 @@ Su Windows: `py -m venv .venv` e `.venv\Scripts\pip install -r requirements.txt`
 
 ### Home Assistant add-on 🏠
 
-Il checker gira anche come add-on di Home Assistant:
+L'add-on di Home Assistant esiste per far girare lo script **24/7** su un setup Home Assistant già sempre acceso, senza tenere aperto un terminale o acceso un computer.
+
+Per installarlo:
 
 1. **Settings → Add-ons → Add-on Store → ⋮ → Repositories**, aggiungi `https://github.com/VoidElle/tuscany-CUP-periodic-checker`
 2. Installa **Tuscany CUP Checker**
