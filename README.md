@@ -26,7 +26,7 @@ Tuscany CUP Periodic Checker prende una **ricetta elettronica**, chiede al porta
 ## Installation 📦
 
 ```bash
-git clone <questo repository>
+git clone https://github.com/VoidElle/tuscany-CUP-periodic-checker.git
 cd tuscany-CUP-periodic-checker
 python3 -m venv .venv   # opzionale: run.sh usa python3 se il venv non c'è
 .venv/bin/pip install -r requirements.txt   # opzionale: supporto Brotli
@@ -38,7 +38,9 @@ Su Windows: `py -m venv .venv` e `.venv\Scripts\pip install -r requirements.txt`
 
 L'add-on di Home Assistant esiste per far girare lo script **24/7** su un setup Home Assistant già sempre acceso, senza tenere aperto un terminale o acceso un computer.
 
-Per installarlo:
+[![Aggiungi il repository a Home Assistant.](https://my.home-assistant.io/badges/supervisor_add_addon_repository.svg)](https://my.home-assistant.io/redirect/supervisor_add_addon_repository/?repository_url=https%3A%2F%2Fgithub.com%2FVoidElle%2Ftuscany-CUP-periodic-checker)
+
+Per installarlo a mano:
 
 1. **Settings → Add-ons → Add-on Store → ⋮ → Repositories**, aggiungi `https://github.com/VoidElle/tuscany-CUP-periodic-checker`
 2. Installa **Tuscany CUP Checker**
