@@ -1,4 +1,6 @@
 <div align="center">
+  <img src="./assets/hero.webp" alt="Colline toscane e uno smartphone con un appuntamento libero nel calendario" width="600" height="300">
+  <br>
   <h1>🩺 Tuscany CUP Periodic Checker</h1>
   <p><em>Controlla periodicamente il CUP della Regione Toscana e ti avvisa appena si libera un posto per la tua visita</em></p>
   <br>
