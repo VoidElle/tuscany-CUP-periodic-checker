@@ -1,5 +1,5 @@
 name: Tuscany CUP Checker
-version: "1.0.0"
+version: "1.1.0"
 slug: tuscany_cup_checker
 description: Periodically checks the Tuscany CUP portal and alerts when an appointment slot frees up
 url: https://github.com/VoidElle/tuscany-CUP-periodic-checker
