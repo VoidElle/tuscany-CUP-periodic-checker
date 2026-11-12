@@ -13,6 +13,7 @@ Polls the Tuscany CUP booking portal (`prenota.sanita.toscana.it`) and alerts wh
 main.py                 # entry point: loop (interval ±20% jitter, plus 2 night checks at 00:10/00:45 local ±10 min: the portal publishes dates around midnight), check_once (2-6 s pause between the two calls)
 cup_checker/config.py   # load_env: reads root .env, real env vars win
 cup_checker/cup_api.py  # portal calls: PORTAL_HEADERS, decode_body (gzip/deflate/zstd/br), http_json, get_prescriptions, get_appointments
+cup_checker/dismissals.py # "Non sono disponibile" Telegram button: getUpdates long-poll thread, accepts presses only from TELEGRAM_CHAT_ID, saves slot_key (YYYYMMDD|HH:MM|idUnita) in $DATA_DIR/dismissed.json (add-on: /data), past slots expire; dismissed slots never alert again
 cup_checker/notifier.py # console + Telegram sendMessage (HTML + "Prenota ora" button, format approved by user) + desktop notification (macOS osascript, Linux notify-send, Windows PowerShell 5.1 toast)
 tests/test_cup_api.py   # unit: response parsing, decode_body
 tests/test_e2e.py       # end-to-end against a local fake portal (real HTTP, encodings, headers, notifications); fake data only

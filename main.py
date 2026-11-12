@@ -3,12 +3,13 @@
 import os
 import random
 import sys
+import threading
 import time
 from datetime import datetime, timedelta
 
-from cup_checker import cup_api
+from cup_checker import cup_api, dismissals
 from cup_checker.config import load_env
-from cup_checker.cup_api import get_appointments, get_prescriptions, service_names
+from cup_checker.cup_api import get_appointments, get_prescriptions, service_names, slot_key
 from cup_checker.notifier import notify_availability, notify_error
 
 
@@ -17,8 +18,12 @@ def check_once():
     time.sleep(random.uniform(2, 6))  # gap between the two calls, like a person reading the page
     appointments = get_appointments(prescriptions)
     stamp = datetime.now().isoformat(timespec="seconds")
-    if appointments:
-        notify_availability(appointments, service_names(prescriptions))
+    skipped = dismissals.dismissed()
+    fresh = [a for a in appointments if slot_key(a) not in skipped]
+    if fresh:
+        notify_availability(fresh, service_names(prescriptions))
+    elif appointments:
+        print(f"[{stamp}] {len(appointments)} slot(s) available, all marked 'non sono disponibile': no alert", flush=True)
     else:
         print(f"[{stamp}] no availability", flush=True)
     return bool(appointments)
@@ -45,6 +50,7 @@ def main():
         print("warning: brotli not installed, Brotli (br) responses disabled. Enable with: pip install -r requirements.txt",
               file=sys.stderr, flush=True)
     interval = int(os.environ.get("CHECK_INTERVAL_SECONDS", "3600"))
+    threading.Thread(target=dismissals.poll_forever, daemon=True).start()
     last_error = None
     while True:
         try:

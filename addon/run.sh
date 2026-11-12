@@ -15,4 +15,5 @@ bashio::config.has_value 'telegram_chat_id' && export TELEGRAM_CHAT_ID="$(bashio
 
 # Never log option values: they are personal health data.
 bashio::log.info "Starting Tuscany CUP checker (interval ${CHECK_INTERVAL_SECONDS}s, telegram $([ -n "${TELEGRAM_BOT_TOKEN:-}" ] && [ -n "${TELEGRAM_CHAT_ID:-}" ] && echo on || echo off))"
+export DATA_DIR=/data   # persists dismissed slots across restarts
 exec python3 -u main.py

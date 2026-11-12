@@ -19,6 +19,7 @@ Tuscany CUP Periodic Checker prende una **ricetta elettronica**, chiede al porta
 ## Funzionalità ✨
 
 - 🔁 **Controllo periodico**: di default ogni ora, intervallo configurabile, con variazione casuale di ±20% e una pausa di 2–6 s tra le due chiamate
+- 🙅 **"Non sono disponibile"**: pulsante sotto ogni posto nel messaggio Telegram; quel posto non viene più notificato (salvato in `dismissed.json`)
 - 🌙 **Controlli notturni**: due in più alle 00:10 e alle 00:45 (±10 min, ora locale), quando il portale carica le nuove date
 - 📲 **Notifica Telegram**: messaggio formattato con pulsante **📅 Prenota ora** (opzionale)
 - 🖥️ **Notifica desktop**: macOS (banner con suono), Linux (`notify-send`), Windows (toast)

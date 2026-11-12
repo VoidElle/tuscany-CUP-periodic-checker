@@ -7,7 +7,8 @@ import shutil
 import subprocess
 import sys
 
-from cup_checker.cup_api import appointment_details, http_json
+from cup_checker.cup_api import appointment_details, http_json, slot_key
+from cup_checker.dismissals import PREFIX as DISMISS_PREFIX
 
 BOOKING_URL = "https://prenota.sanita.toscana.it"
 
@@ -53,7 +54,7 @@ MAX_LISTED = 10  # keeps the Telegram message well under its 4096-char limit
 
 def notify_availability(appointments, services):
     count = len(appointments)
-    details = sorted((appointment_details(a) for a in appointments), key=lambda d: (d["date"][6:], d["date"][3:5], d["date"][:2], d["time"]))
+    details = sorted(({**appointment_details(a), "key": slot_key(a)} for a in appointments), key=lambda d: (d["date"][6:], d["date"][3:5], d["date"][:2], d["time"]))
     shown, hidden = details[:MAX_LISTED], count - min(count, MAX_LISTED)
 
     plain = [f"{count} appointment(s) available! Book at {BOOKING_URL}"]
@@ -73,7 +74,9 @@ def notify_availability(appointments, services):
     if hidden:
         lines += ["", f"➕ <i>altri {hidden} sul portale</i>"]
     lines += ["", "⏳ <i>I posti vanno via in fretta: prenota subito.</i>"]
-    notify("\n".join(plain), "\n".join(lines), BOOKING_BUTTON)
+    dismiss_rows = [[{"text": "🙅 Non sono disponibile" if len(shown) == 1 else f"🙅 Non disponibile {d['date']} {d['time']}".strip(),
+                      "callback_data": DISMISS_PREFIX + d["key"]}] for d in shown if d["key"]]
+    notify("\n".join(plain), "\n".join(lines), {"inline_keyboard": dismiss_rows + BOOKING_BUTTON["inline_keyboard"]})
 
 
 def notify_error(error, retry_minutes):

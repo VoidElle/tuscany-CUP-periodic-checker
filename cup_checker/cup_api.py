@@ -115,3 +115,9 @@ def appointment_details(appointment):
         "address": address,
         "phone": unit.get("telefonoUnita") or "",
     }
+
+
+def slot_key(appointment):
+    """Stable id of a slot across searches (idAppuntamento may change): YYYYMMDD|HH:MM|idUnita, or None."""
+    parts = (appointment.get("dataAppuntamento"), appointment.get("oraAppuntamento"), (appointment.get("unita") or {}).get("idUnita"))
+    return "|".join(parts) if all(parts) else None

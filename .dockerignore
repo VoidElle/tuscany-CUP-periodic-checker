@@ -8,3 +8,4 @@ log*.txt
 .claude
 **/__pycache__
 .DS_Store
+dismissed.json

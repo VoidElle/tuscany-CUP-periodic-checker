@@ -28,6 +28,7 @@ Telegram is enabled only when both Telegram options are set.
 ## Alerts
 
 - **Slot available**: Telegram message with date, time, facility, address and phone of each slot (earliest first, up to 10) and a **📅 Prenota ora** button. The log gets one line per slot.
+- **🙅 Non sono disponibile**: button under each slot in the Telegram message. A dismissed slot is never alerted again; the choice is kept in the add-on data across restarts.
 - **Error** (network, portal, wrong data): Telegram message and log line. The same error repeated on the next round is logged only, without a new alert.
 - Without Telegram, alerts appear only in the add-on log: there is no desktop notification inside Home Assistant.
 
