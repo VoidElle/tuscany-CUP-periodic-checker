@@ -4,7 +4,7 @@ import os
 import random
 import sys
 import time
-from datetime import datetime
+from datetime import datetime, timedelta
 
 from cup_checker import cup_api
 from cup_checker.config import load_env
@@ -24,6 +24,21 @@ def check_once():
     return bool(appointments)
 
 
+# The portal publishes new dates around midnight: extra checks at these local times, ± NIGHT_JITTER seconds.
+NIGHT_CHECKS = ((0, 10), (0, 45))
+NIGHT_JITTER = 600
+
+
+def next_sleep(now, interval):
+    """Seconds until the next check: the regular jittered interval, or the next night check if it comes first."""
+    regular = interval * random.uniform(0.8, 1.2)  # ±20% jitter: no fixed-period request pattern
+    slots = [now.replace(hour=h, minute=m, second=0, microsecond=0) + timedelta(days=d) for h, m in NIGHT_CHECKS for d in (0, 1)]
+    # Skip a slot we are already inside the jitter window of: that check has just run.
+    upcoming = min(t for t in slots if (t - now).total_seconds() > NIGHT_JITTER)
+    night = (upcoming - now).total_seconds() + random.uniform(-NIGHT_JITTER, NIGHT_JITTER)
+    return min(regular, night)
+
+
 def main():
     load_env()
     if not cup_api.brotli:
@@ -41,7 +56,7 @@ def main():
             else:
                 notify_error(f"[{datetime.now().isoformat(timespec='seconds')}] {e}", round(interval / 60))
             last_error = str(e)
-        time.sleep(interval * random.uniform(0.8, 1.2))  # ±20% jitter: no fixed-period request pattern
+        time.sleep(next_sleep(datetime.now(), interval))
 
 
 if __name__ == "__main__":

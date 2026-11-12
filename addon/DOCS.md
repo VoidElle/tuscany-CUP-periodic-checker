@@ -19,7 +19,7 @@ The three patient fields are personal health data. They are stored by Home Assis
 | `fiscal_code` | *(required)* | Codice fiscale of the patient |
 | `health_card_number` | *(required)* | Tessera sanitaria number |
 | `electronic_prescription_number` | *(required)* | NRE of the prescription |
-| `check_interval_seconds` | `3600` | Seconds between checks (300–86400), randomised by ±20% |
+| `check_interval_seconds` | `3600` | Seconds between checks (300–86400), randomised by ±20%. Two extra checks also run at 00:10 and 00:45 (±10 min, Home Assistant time zone), when the portal publishes new dates |
 | `telegram_bot_token` | *(empty)* | Bot token from @BotFather |
 | `telegram_chat_id` | *(empty)* | Chat that receives the alerts |
 

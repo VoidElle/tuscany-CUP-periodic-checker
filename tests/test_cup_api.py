@@ -50,3 +50,18 @@ assert appointment_details(real) == {"date": "27/11/2026", "time": "09:00", "fac
                                      "address": "VIA MONTEBELLO,102, LIVORNO (LI)", "phone": "0586 263111"}
 assert appointment_details({"unita": None}) == {"date": "", "time": "", "facility": "", "address": "", "phone": ""}
 print("ok appointment details")
+
+from datetime import datetime
+
+from main import NIGHT_JITTER, next_sleep
+
+for _ in range(200):
+    # Daytime, 1 h interval: regular jittered interval wins.
+    assert 2880 <= next_sleep(datetime(2026, 11, 12, 15, 0), 3600) <= 4320
+    # 23:30: the 00:10 night check comes before the regular one.
+    assert 40 * 60 - NIGHT_JITTER <= next_sleep(datetime(2026, 11, 12, 23, 30), 3600) <= 40 * 60 + NIGHT_JITTER
+    # Right after the 00:10 check (ran early at 00:09): next is 00:45, not 00:10 again.
+    assert 36 * 60 - NIGHT_JITTER <= next_sleep(datetime(2026, 11, 13, 0, 9), 3600) <= 36 * 60 + NIGHT_JITTER
+    # After 00:45 (ran late at 00:46): no more night checks until tomorrow, regular interval.
+    assert 2880 <= next_sleep(datetime(2026, 11, 13, 0, 46), 3600) <= 4320
+print("ok night schedule")

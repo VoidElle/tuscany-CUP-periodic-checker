@@ -10,7 +10,7 @@
 Polls the Tuscany CUP booking portal (`prenota.sanita.toscana.it`) and alerts when an appointment becomes available for an electronic prescription. Python 3.14 (needs `compression.zstd`), stdlib only plus optional `brotli` (`requirements.txt`; `br` is advertised in Accept-Encoding only if importable), venv in `.venv`.
 
 ```
-main.py                 # entry point: loop (interval ±20% jitter), check_once (2-6 s pause between the two calls)
+main.py                 # entry point: loop (interval ±20% jitter, plus 2 night checks at 00:10/00:45 local ±10 min: the portal publishes dates around midnight), check_once (2-6 s pause between the two calls)
 cup_checker/config.py   # load_env: reads root .env, real env vars win
 cup_checker/cup_api.py  # portal calls: PORTAL_HEADERS, decode_body (gzip/deflate/zstd/br), http_json, get_prescriptions, get_appointments
 cup_checker/notifier.py # console + Telegram sendMessage (HTML + "Prenota ora" button, format approved by user) + desktop notification (macOS osascript, Linux notify-send, Windows PowerShell 5.1 toast)
