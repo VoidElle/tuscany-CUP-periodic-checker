@@ -4,13 +4,13 @@
   <h1>🩺 Tuscany CUP Periodic Checker</h1>
   <p><em>Controlla periodicamente il CUP della Regione Toscana e ti avvisa appena si libera un posto per la tua visita</em></p>
   <br>
-  <img src="https://img.shields.io/badge/python-3.14-3776AB?style=flat-square&logo=python&logoColor=white" alt="python">
+  <img src="https://img.shields.io/badge/python-3.12%2B-3776AB?style=flat-square&logo=python&logoColor=white" alt="python">
   <img src="https://img.shields.io/badge/dependencies-optional-brightgreen?style=flat-square" alt="dependencies">
   <img src="https://img.shields.io/badge/platform-macOS%20%7C%20Linux%20%7C%20Windows-lightgrey?style=flat-square" alt="platform">
   <img src="https://img.shields.io/badge/notifications-Telegram-26A5E4?style=flat-square&logo=telegram&logoColor=white" alt="telegram">
 </div>
 
-> **Disclaimer:** progetto non ufficiale e personale. Non è affiliato, approvato o supportato dalla Regione Toscana né dalle aziende sanitarie. Usa le stesse chiamate del portale [prenota.sanita.toscana.it](https://prenota.sanita.toscana.it): un controllo all'ora, come farebbe una persona.
+> **Disclaimer:** progetto non ufficiale e personale. Non è affiliato, approvato o supportato dalla Regione Toscana né dalle aziende sanitarie. Usa le stesse chiamate del portale [prenota.sanita.toscana.it](https://prenota.sanita.toscana.it): un controllo all'ora più due nella notte, meno di quanto farebbe una persona che ricarica la pagina.
 
 > **Language note:** this README is written in Italian on purpose. The project targets one Italian regional service only (the CUP booking portal of Regione Toscana), so its users are Italian residents of Tuscany.
 
@@ -21,7 +21,7 @@ Tuscany CUP Periodic Checker prende una **ricetta elettronica**, chiede al porta
 - 🔁 **Controllo periodico**: di default ogni ora, intervallo configurabile, con variazione casuale di ±20% e una pausa di 2–6 s tra le due chiamate
 - 🙅 **"Non sono disponibile"**: pulsante sotto ogni posto nel messaggio Telegram; quel posto non viene più notificato (salvato in `dismissed.json`)
 - 🌙 **Controlli notturni**: due in più alle 00:10 e alle 00:45 (±10 min, ora locale), quando il portale carica le nuove date
-- 📲 **Notifica Telegram**: messaggio formattato con pulsante **📅 Prenota ora** (opzionale)
+- 📲 **Notifica Telegram**: per ogni posto data, ora, struttura, indirizzo e telefono, con pulsante **📅 Prenota ora** (opzionale)
 - 🖥️ **Notifica desktop**: macOS (banner con suono), Linux (`notify-send`), Windows (toast)
 - 🧾 **Ricetta sempre aggiornata**: la ricetta viene riletta a ogni controllo, perché il portale rigenera i suoi ID
 - 🛡️ **Privacy**: i dati personali stanno solo in `.env` e non finiscono mai nei log
@@ -90,6 +90,8 @@ Per trovare il chat id:
 3. Apri `https://api.telegram.org/bot<TOKEN>/getUpdates` nel browser (`bot` attaccato al token, senza `<` `>`)
 4. Copia `message.chat.id` in `TELEGRAM_CHAT_ID`
 
+Fallo con lo script fermo: mentre gira, lo script legge lui gli aggiornamenti del bot (per il pulsante "Non sono disponibile") e `getUpdates` nel browser risulta vuoto o in conflitto.
+
 Prova la notifica senza chiamare il portale:
 
 ```bash
@@ -111,7 +113,9 @@ Lo script gira in loop finché non lo fermi con `Ctrl+C`.
 |---|---|
 | `[<timestamp>] no availability` | Nessun posto libero, riprova al prossimo giro |
 | Telegram + notifica desktop + una riga per posto (data, ora, struttura, indirizzo, telefono) | 🎉 Posto libero: corri a prenotare |
-| `error: ...` su stderr | Errore di rete o API, riprova al prossimo giro |
+| `[<timestamp>] N slot(s) available, all marked 'non sono disponibile': no alert` | Ci sono posti, ma li hai già scartati tutti |
+| `error: ...` su stderr | Errore di rete o API, riprova al prossimo giro (avviso anche su Telegram) |
+| `error (repeated): ...` su stderr | Stesso errore del giro prima: solo log, nessun nuovo avviso |
 
 ## Come funziona 🔧
 
@@ -141,6 +145,7 @@ cup_checker/
   config.py              # lettura .env
   cup_api.py             # chiamate al portale
   notifier.py            # console + Telegram + desktop
+  dismissals.py          # pulsante "Non sono disponibile" e dismissed.json
 addon/                   # add-on Home Assistant (config, Dockerfile, run.sh, DOCS, traduzioni)
 repository.yaml          # repository add-on per Home Assistant
 .github/workflows/       # build immagini add-on su GHCR (al push di un tag)
@@ -161,6 +166,8 @@ Vanno lanciati dalla root con `-m`. Usano solo dati finti: nessuna chiamata al p
 ## Limiti ⚠️
 
 - Cerca solo nell'**area dell'assistito**, non nelle aree limitrofe
+- Quando trova un posto, la ricerca stessa lo mette in stato `RISERVATO` per un po': nel frattempo potresti non vederlo neanche tu sul portale
+- Un solo processo alla volta può usare lo stesso bot Telegram (vedi sotto `409 Conflict`)
 - Si ferma se il computer va in sospensione o se chiudi il terminale
 - Su Linux senza `notify-send` (es. server headless) non c'è notifica desktop: restano console e Telegram
 - Su Windows serve Windows PowerShell 5.1 (`powershell.exe`, già incluso in Windows 10/11)
@@ -178,6 +185,9 @@ Il token nell'URL è sbagliato. Scrivi `bot` attaccato al token, senza `<` `>` n
 
 ### `telegram error: ...`
 La notifica Telegram non è partita, ma quella desktop sì. Controlla token e chat id con il comando di test in [Telegram](#telegram-).
+
+### `telegram polling error: 409 on getUpdates`
+Un altro processo sta già leggendo gli aggiornamenti dello stesso bot, per esempio lo script in locale e l'add-on insieme. Tieni attivo uno solo dei due, oppure usa due bot diversi.
 
 ### `desktop notification error: ...`
 La notifica desktop non è partita, ma console e Telegram sì. Su Linux installa `notify-send` (pacchetto `libnotify-bin` su Debian/Ubuntu, `libnotify` su Fedora/Arch).
