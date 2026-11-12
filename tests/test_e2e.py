@@ -82,11 +82,18 @@ def run():
     print("ok request headers and payload")
 
     # 3. Availability: Telegram with booking button + desktop.
-    state.update(encoding="gzip", appointments=[{"id": "x"}, {"id": "y"}])
+    state.update(encoding="gzip", appointments=[
+        {"dataAppuntamento": "20261203", "oraAppuntamento": "15:30", "unita": {"descUnita": "OSPEDALE B & C", "nomeComuneUnita": "PISA"}},
+        {"dataAppuntamento": "20261127", "oraAppuntamento": "09:00", "unita": {"descUnita": "AMBULATORIO A", "telefonoUnita": "000"}},
+    ])
     assert main.check_once() is True
     kinds = [s[0] for s in sent]
     assert kinds == ["telegram", "desktop"], kinds
     assert "<b>2</b> appuntamenti disponibili" in sent[0][1] and "VISITA TEST" in sent[0][1]
+    text = sent[0][1]
+    assert text.index("27/11/2026") < text.index("03/12/2026"), "earliest slot first"
+    assert "📅 <b>27/11/2026</b> ore <b>09:00</b>" in text and "☎️ 000" in text and "OSPEDALE B &amp; C" in text
+    assert "27/11/2026 09:00 | AMBULATORIO A | tel. 000" in sent[1][1], sent[1][1]
     assert sent[0][2] == notifier.BOOKING_BUTTON
     print("ok availability notification")
 

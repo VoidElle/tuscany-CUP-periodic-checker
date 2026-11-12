@@ -1,6 +1,5 @@
 """Periodically check Tuscany CUP for available appointments of an electronic prescription."""
 
-import json
 import os
 import random
 import sys
@@ -19,8 +18,7 @@ def check_once():
     appointments = get_appointments(prescriptions)
     stamp = datetime.now().isoformat(timespec="seconds")
     if appointments:
-        notify_availability(len(appointments), service_names(prescriptions))
-        print(json.dumps(appointments, indent=2, ensure_ascii=False), flush=True)
+        notify_availability(appointments, service_names(prescriptions))
     else:
         print(f"[{stamp}] no availability", flush=True)
     return bool(appointments)

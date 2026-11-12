@@ -7,7 +7,7 @@ import shutil
 import subprocess
 import sys
 
-from cup_checker.cup_api import http_json
+from cup_checker.cup_api import appointment_details, http_json
 
 BOOKING_URL = "https://prenota.sanita.toscana.it"
 
@@ -48,17 +48,32 @@ def desktop_notify(message):
         print(f"desktop notification error: {e}", file=sys.stderr, flush=True)
 
 
-def notify_availability(count, services):
-    plain = f"{count} appointment(s) available! Book at {BOOKING_URL}"
+MAX_LISTED = 10  # keeps the Telegram message well under its 4096-char limit
+
+
+def notify_availability(appointments, services):
+    count = len(appointments)
+    details = sorted((appointment_details(a) for a in appointments), key=lambda d: (d["date"][6:], d["date"][3:5], d["date"][:2], d["time"]))
+    shown, hidden = details[:MAX_LISTED], count - min(count, MAX_LISTED)
+
+    plain = [f"{count} appointment(s) available! Book at {BOOKING_URL}"]
+    plain += [" | ".join(x for x in (f"{d['date']} {d['time']}".strip(), d["facility"], d["address"], d["phone"] and f"tel. {d['phone']}") if x)
+              for d in details]
+
     lines = [
         "🩺 <b>CUP Toscana: posto libero!</b>",
         "",
         f"✅ <b>{count}</b> {'appuntamento disponibile' if count == 1 else 'appuntamenti disponibili'}",
         *(f"🏥 {html.escape(s.strip())}" for s in services),
-        "",
-        "⏳ <i>I posti vanno via in fretta: prenota subito.</i>",
     ]
-    notify(plain, "\n".join(lines), BOOKING_BUTTON)
+    for d in shown:
+        lines.append("")
+        lines.append(f"📅 <b>{html.escape(d['date'])}</b> ore <b>{html.escape(d['time'])}</b>" if d["time"] else f"📅 <b>{html.escape(d['date'])}</b>")
+        lines += [f"{icon} {html.escape(d[key])}" for icon, key in (("🏢", "facility"), ("📍", "address"), ("☎️", "phone")) if d[key]]
+    if hidden:
+        lines += ["", f"➕ <i>altri {hidden} sul portale</i>"]
+    lines += ["", "⏳ <i>I posti vanno via in fretta: prenota subito.</i>"]
+    notify("\n".join(plain), "\n".join(lines), BOOKING_BUTTON)
 
 
 def notify_error(error, retry_minutes):

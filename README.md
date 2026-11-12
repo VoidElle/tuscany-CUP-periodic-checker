@@ -108,7 +108,7 @@ Lo script gira in loop finché non lo fermi con `Ctrl+C`.
 | Output | Significato |
 |---|---|
 | `[<timestamp>] no availability` | Nessun posto libero, riprova al prossimo giro |
-| Telegram + notifica desktop + elenco in console | 🎉 Posto libero: corri a prenotare |
+| Telegram + notifica desktop + una riga per posto (data, ora, struttura, indirizzo, telefono) | 🎉 Posto libero: corri a prenotare |
 | `error: ...` su stderr | Errore di rete o API, riprova al prossimo giro |
 
 ## Come funziona 🔧
@@ -159,7 +159,6 @@ Vanno lanciati dalla root con `-m`. Usano solo dati finti: nessuna chiamata al p
 ## Limiti ⚠️
 
 - Cerca solo nell'**area dell'assistito**, non nelle aree limitrofe
-- Il caso "appuntamento disponibile" non è ancora stato osservato dal vivo, quindi la notifica non riporta data e struttura
 - Si ferma se il computer va in sospensione o se chiudi il terminale
 - Su Linux senza `notify-send` (es. server headless) non c'è notifica desktop: restano console e Telegram
 - Su Windows serve Windows PowerShell 5.1 (`powershell.exe`, già incluso in Windows 10/11)

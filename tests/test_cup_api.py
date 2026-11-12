@@ -39,3 +39,14 @@ try:
 except RuntimeError:
     pass
 print("ok decode")
+
+from cup_checker.cup_api import appointment_details
+
+# Shape of a real available appointment (public facility data only, no patient data).
+real = {"dataAppuntamento": "20261127", "oraAppuntamento": "09:00", "unita": {
+    "descUnita": "106 Livornese Villa Tirrena - CARDIOLOGIA", "indirizzoUnita": "VIA MONTEBELLO,102",
+    "nomeComuneUnita": "LIVORNO", "provinciaUnita": "LI", "telefonoUnita": "0586 263111"}}
+assert appointment_details(real) == {"date": "27/11/2026", "time": "09:00", "facility": "106 Livornese Villa Tirrena - CARDIOLOGIA",
+                                     "address": "VIA MONTEBELLO,102, LIVORNO (LI)", "phone": "0586 263111"}
+assert appointment_details({"unita": None}) == {"date": "", "time": "", "facility": "", "address": "", "phone": ""}
+print("ok appointment details")

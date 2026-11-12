@@ -99,3 +99,19 @@ def appointments_from(body):
 def service_names(prescriptions):
     return [p.get("descrizionePrestazione") for rx in prescriptions.get("prescrizione") or []
             for p in (rx.get("listaPrestazioni") or {}).get("prestazione") or [] if p.get("descrizionePrestazione")]
+
+
+def appointment_details(appointment):
+    """Date, time, facility, address and phone of one appointment, as display strings ("" when missing)."""
+    unit = appointment.get("unita") or {}
+    day = appointment.get("dataAppuntamento") or ""  # YYYYMMDD
+    address = ", ".join(x for x in (unit.get("indirizzoUnita"), unit.get("nomeComuneUnita")) if x)
+    if address and unit.get("provinciaUnita"):
+        address += f" ({unit['provinciaUnita']})"
+    return {
+        "date": f"{day[6:8]}/{day[4:6]}/{day[0:4]}" if len(day) == 8 else day,
+        "time": appointment.get("oraAppuntamento") or "",
+        "facility": (unit.get("descUnita") or "").strip(),
+        "address": address,
+        "phone": unit.get("telefonoUnita") or "",
+    }

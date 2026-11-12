@@ -27,7 +27,7 @@ Telegram is enabled only when both Telegram options are set.
 
 ## Alerts
 
-- **Slot available**: Telegram message with a **📅 Prenota ora** button, plus the full appointment list in the log.
+- **Slot available**: Telegram message with date, time, facility, address and phone of each slot (earliest first, up to 10) and a **📅 Prenota ora** button. The log gets one line per slot.
 - **Error** (network, portal, wrong data): Telegram message and log line. The same error repeated on the next round is logged only, without a new alert.
 - Without Telegram, alerts appear only in the add-on log: there is no desktop notification inside Home Assistant.
 
@@ -42,5 +42,4 @@ Telegram is enabled only when both Telegram options are set.
 ## Limitations
 
 - Searches only the patient's own area.
-- The "slot available" response has never been observed live, so the alert does not include date or facility.
 - Zstandard (`zstd`) responses are not supported in this image (Python 3.12). gzip, deflate and Brotli are.

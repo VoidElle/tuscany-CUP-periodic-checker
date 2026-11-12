@@ -40,7 +40,8 @@ Base: `https://prenota.sanita.toscana.it/sis-portalepren/sis-portale-prenotazion
    - Availability = `response.listaAppuntamenti.appuntamento` non-empty.
    - No availability: empty `appuntamento`, `listaPrestazioniIndisponibili` filled, `esito[0].codice == "127"` ("Non è stato possibile calcolare nessun appuntamento disponibile").
    - `tipo: "R"` searches only the patient's own area (`sfogliamentoAree.attuale`). Wider search uses `"tipo": "S"` plus `"livelloSfogliamentoAree": N` (next area is in `sfogliamentoAree.successiva`). User chose NOT to extend the area.
-   - Shape of an available `appuntamento` is unknown (never observed): the positive path is untested.
+   - Side effect (confirmed by user): when a slot is found, the search itself puts it in `statoAppuntamento: "RISERVATO"`, i.e. the portal temporarily holds it for this session. Every check that finds a slot holds it for a while, hiding it from other patients and possibly from the user's own browser. How long the hold lasts and whether a release call exists are unknown.
+   - Available `appuntamento` (observed live): `dataAppuntamento` (YYYYMMDD), `oraAppuntamento` (HH:MM), `statoAppuntamento` (`RISERVATO`), `unita.descUnita` / `indirizzoUnita` / `nomeComuneUnita` / `provinciaUnita` / `telefonoUnita`. `appointment_details` turns these into display strings. Alerts list slots earliest first, max 10 in Telegram. In that response `esito[0]` is a `WRN` warning (maximum waiting time exceeded), not an error.
 
 # HTTP / notification behavior
 
